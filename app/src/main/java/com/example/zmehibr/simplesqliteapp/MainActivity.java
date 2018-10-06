@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,8 +37,13 @@ public class MainActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("MainActivity", "Save Button Clicked");
+
                 String name = ((EditText)findViewById(R.id.edit_text_name)).getText().toString();
                 String department = ((EditText)findViewById(R.id.edit_text_dept)).getText().toString();
+
+                Log.d("MainActivity", "Recieved values Name: "+ name + ", Department: "+ department + " from user");
+
                 addPersonToDatabase(new Person(name, department));
             }
         });
@@ -86,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
         int countAfterStoring = (int)(db.insert(Contract.PersonEntry.TABLE_NAME,null, values));
 
         if(countAfterStoring > count){
+            Log.d("MainActivity", "As count after storing is greater than previous count, data has been added");
+
             Toast.makeText(MainActivity.this, "Added Successfully!", Toast.LENGTH_SHORT).show();
             setUpListView();
         } else {
@@ -101,13 +109,20 @@ public class MainActivity extends AppCompatActivity {
         Cursor cursor = db.rawQuery("SELECT * FROM "+Contract.PersonEntry.TABLE_NAME, null);
         MyCursorAdapter listAdapter = new MyCursorAdapter(this, cursor);
         listView.setAdapter(listAdapter);
+
+        Log.d("MainActivity", "Refreshing List View");
+
         clearEditTexts();
+
+        Log.d("MainActivity", "Previous texts in Edit Text Fields cleared");
     }
 
     public void deleteEntry(String name){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(Contract.PersonEntry.TABLE_NAME, "name = ?", new String[]{ name });
         setUpListView();
+
+        Log.d("MainActivity", "List updated after deleting one entry");
     }
 
     public void clearEditTexts(){
@@ -124,6 +139,8 @@ public class MainActivity extends AppCompatActivity {
 
         setUpListView();
         clearEditTexts();
+
+        Log.d("MainActivity", "Entry updated! changes are visible in the list view");
     }
 
     public void searchPersonInDatabase(String name){
@@ -134,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
         String dept1 = cursor.getString(2);
 
         Toast.makeText(MainActivity.this, name1+" "+dept1, Toast.LENGTH_SHORT).show();
+        Log.d("MainActivity", "search result is shown in a toast message");
     }
 
 
